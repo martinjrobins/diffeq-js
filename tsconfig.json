@@ -2,10 +2,11 @@
   "include": [
     "src/**/*",
     "node_modules/**/*"
-  ],
+, "test"  ],
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES2017",
     "strict": true,
+    "module": "esnext",
     "moduleResolution": "node"
   }
 }

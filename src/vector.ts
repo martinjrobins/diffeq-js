@@ -15,37 +15,29 @@ let Vector_get: Vector_get_t | undefined = undefined;
 type Vector_set_t = (ptr: number, index: number, value: number) => void;
 let Vector_set: Vector_set_t | undefined = undefined;
 
-
-interface IVector {
-  start?: number;
-  stop?: number;
-  len?: number;
-  capacity?: number;
+export function extract_vector_functions(obj: WebAssembly.WebAssemblyInstantiatedSource) {
+  Vector_create = obj.instance.exports.Vector_create as Vector_create_t;
+  Vector_destroy = obj.instance.exports.Vector_destroy as Vector_destroy_t;
+  Vector_linspace_create = obj.instance.exports.Vector_linspace_create as Vector_linspace_create_t;
+  Vector_create_with_capacity = obj.instance.exports.Vector_create_with_capacity as Vector_create_with_capacity_t;
+  Vector_push = obj.instance.exports.Vector_push as Vector_push_t;
+  Vector_get = obj.instance.exports.Vector_get as Vector_get_t;
+  Vector_set = obj.instance.exports.Vector_set as Vector_set_t;
 }
 
 class Vector {
   pointer: number;
-  constructor(IVector?: IVector) {
-    if (IVector) {
-      if (IVector.start && IVector.stop && IVector.len) {
-        this.pointer = check_function(Vector_linspace_create)(IVector.start, IVector.stop, IVector.len);
-      } else if (IVector.len && IVector.capacity) {
-        this.pointer = check_function(Vector_create_with_capacity)(IVector.len, IVector.capacity);
-      } else {
-        throw new Error("Invalid arguments");
-      }
-    } else {
-      this.pointer = check_function(Vector_create)();
+  length: number;
+  constructor(array: number[]) {
+    this.length = array.length;
+    this.pointer = check_function(Vector_create_with_capacity)(0, array.length)
+    let push = check_function(Vector_push);
+    for (let i = 0; i < array.length; i++) {
+      push(this.pointer, array[i]);
     }
-  }
-  push(value: number) {
-    check_function(Vector_push)(this.pointer, value);
   }
   get(index: number) {
     return check_function(Vector_get)(this.pointer, index);
-  }
-  set(index: number, value: number) {
-    check_function(Vector_set)(this.pointer, index, value);
   }
   destroy() {
     check_function(Vector_destroy)(this.pointer);

@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "type": "module",
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
@@ -15,9 +16,12 @@
     "@parcel/transformer-typescript-types": "2.9.3",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.9",
     "chai": "^4.3.8",
     "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
     "parcel": "latest",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {

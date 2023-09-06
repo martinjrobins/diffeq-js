@@ -1,0 +1,16 @@
+{
+  "extension": [
+      "ts"
+  ],
+  "spec": [
+      "test/**/*.spec.ts"
+  ],
+  "watch-files": [
+      "src/**/*.ts",
+      "test/**/*.ts"
+  ],
+  "node-option": [
+      "experimental-specifier-resolution=node",
+      "loader=ts-node/esm"
+  ]
+}
