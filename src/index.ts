@@ -4,8 +4,8 @@ import { extract_options_functions } from "./options";
 import { extract_solver_functions } from "./solver";
 
 
-let args = ["bin", "arg1", "arg2"];
-let env = ["FOO=bar"];
+let args: string[] = [];
+let env: string[] = [];
 let fds = [
     new OpenFile(new File([])), // stdin
     new OpenFile(new File([])), // stdout
