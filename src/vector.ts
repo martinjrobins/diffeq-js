@@ -1,4 +1,5 @@
 import { check_function } from "./utils";
+import { getWasmMemory } from "./index";
 
 type Vector_create_t = () => number;
 let Vector_create: Vector_create_t | undefined = undefined;
@@ -14,6 +15,8 @@ type Vector_get_t = (ptr: number, index: number) => number;
 let Vector_get: Vector_get_t | undefined = undefined;
 type Vector_set_t = (ptr: number, index: number, value: number) => void;
 let Vector_set: Vector_set_t | undefined = undefined;
+type Vector_get_data_t = (ptr: number) => number;
+let Vector_get_data: Vector_get_data_t | undefined = undefined;
 
 export function extract_vector_functions(obj: WebAssembly.WebAssemblyInstantiatedSource) {
   Vector_create = obj.instance.exports.Vector_create as Vector_create_t;
@@ -23,6 +26,7 @@ export function extract_vector_functions(obj: WebAssembly.WebAssemblyInstantiate
   Vector_push = obj.instance.exports.Vector_push as Vector_push_t;
   Vector_get = obj.instance.exports.Vector_get as Vector_get_t;
   Vector_set = obj.instance.exports.Vector_set as Vector_set_t;
+  Vector_get_data = obj.instance.exports.Vector_get_data as Vector_get_data_t;
 }
 
 class Vector {
@@ -38,6 +42,10 @@ class Vector {
   }
   get(index: number) {
     return check_function(Vector_get)(this.pointer, index);
+  }
+  getFloat64Array() {
+    const data = check_function(Vector_get_data)(this.pointer);
+    return new Float64Array(getWasmMemory().buffer, data, this.length);
   }
   destroy() {
     check_function(Vector_destroy)(this.pointer);

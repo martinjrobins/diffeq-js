@@ -1,12 +1,26 @@
 {
   "include": [
     "src/**/*",
-    "node_modules/**/*"
-, "test"  ],
+    "node_modules/**/*", 
+    "test"  
+  ],
   "compilerOptions": {
-    "target": "ES2017",
+    "paths": {
+      "/*": ["*"],
+    },
+    "baseUrl": ".",
+    "target": "es6",
+    "module": "es6",
+    "lib": ["es6", "dom", "ES2015", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext"],
+    "sourceMap": true,
     "strict": true,
-    "module": "esnext",
-    "moduleResolution": "node"
+    "esModuleInterop": true,
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "moduleDetection": "force"
+    }
+
   }
 }

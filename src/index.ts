@@ -1,7 +1,8 @@
 import { WASI, File, OpenFile, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
-import { extract_vector_functions } from "./vector";
-import { extract_options_functions } from "./options";
-import { extract_solver_functions } from "./solver";
+import Vector, { extract_vector_functions } from "./vector";
+import Options, { extract_options_functions } from "./options";
+import Solver, { extract_solver_functions } from "./solver";
+import base from "/node_modules/base-x/src/index";
 
 
 let args: string[] = [];
@@ -14,14 +15,33 @@ let fds = [
 let wasi = new WASI(args, env, fds);
 let inst: WebAssembly.WebAssemblyInstantiatedSource | undefined = undefined;
 
-const baseUrl = "http://localhost:8080";
+function getWasmMemory() {
+  if (inst === undefined) {
+    throw new Error("WASM module not loaded");
+  }
+  return inst.instance.exports.memory as WebAssembly.Memory;
+}
 
-export function compileModel(text: string) {
-  const response = fetch(`${baseUrl}/compile`);
+const defaultBaseUrl = "https://diffeq-backend.fly.dev";
+
+function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
+  const data = {
+    text,
+    name: "unknown",
+  };
+  const options: RequestInit = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  const response = fetch(`${baseUrl}/compile`, options);
   return compileResponse(response);
 }
 
-export function compileResponse(response: Promise<Response>) {
+function compileResponse(response: Promise<Response>) {
   const importObject = {
     "wasi_snapshot_preview1": wasi.wasiImport,
   };
@@ -34,6 +54,8 @@ export function compileResponse(response: Promise<Response>) {
     },
   );
 }
+
+export { compileModel, compileResponse, Vector, Options, Solver, getWasmMemory }
 
 
 

@@ -1,7 +1,7 @@
 import Options from '../src/options';
 import { describe, it, before } from 'mocha';
 import { assert } from 'chai';
-import { compileResponse } from '../src';
+import { compileResponse } from '../src/index';
 import * as fs from 'fs';
 
 
