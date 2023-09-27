@@ -1,0 +1,8 @@
+.nyc_output
+.parcel-cache
+coverage
+node_modules
+public
+test
+yarn-error.log
+tmp*.out

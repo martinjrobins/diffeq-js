@@ -1,8 +1,12 @@
 import { WASI, File, OpenFile, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
-import Vector, { extract_vector_functions } from "./vector";
-import Options, { extract_options_functions } from "./options";
-import Solver, { extract_solver_functions } from "./solver";
+import { extract_vector_functions } from "./vector";
+import { extract_options_functions } from "./options";
+import { extract_solver_functions } from "./solver";
 import base from "/node_modules/base-x/src/index";
+
+export { default as Vector } from "./vector";
+export { default as Options } from "./options";
+export { default as Solver } from "./solver";
 
 
 let args: string[] = [];
@@ -55,7 +59,7 @@ function compileResponse(response: Promise<Response>) {
   );
 }
 
-export { compileModel, compileResponse, Vector, Options, Solver, getWasmMemory }
+export { compileModel, compileResponse, getWasmMemory }
 
 
 
