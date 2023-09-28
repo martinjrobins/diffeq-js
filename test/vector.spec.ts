@@ -1,16 +1,14 @@
 import Vector from '../src/vector';
 import { describe, it, before } from 'mocha';
 import { assert } from 'chai';
-import { compileResponse } from '../src';
 import * as fs from 'fs';
+import logistic_code from './logistic';
+import { compileModel } from '../src/index';
 
 
 describe('Vector', function () {
   before(function () {
-    const data = fs.readFileSync("logistic.wasm");
-    const blob = new Blob([data], { type: "application/wasm" });
-    const promise = new Response(blob);
-    return compileResponse(Promise.resolve(promise));
+    return compileModel(logistic_code);
   });
 
   it('can construct and destroy', function () {

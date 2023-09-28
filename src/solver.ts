@@ -46,13 +46,13 @@ class Solver {
     check_function(Solver_destroy)(this.pointer);
   }
   solve(times: Vector, inputs: Vector, outputs: Vector) {
-    if (inputs.length != this.number_of_inputs) {
+    if (inputs.length() != this.number_of_inputs) {
       throw new Error(`Expected ${this.number_of_inputs} inputs, got ${inputs.length}`);
     }
-    if (outputs.length != this.number_of_outputs * times.length) {
+    if (outputs.length() != this.number_of_outputs * times.length()) {
       throw new Error(`Expected ${this.number_of_outputs * times.length} outputs, got ${outputs.length}`);
     }
-    if (times.length === 0) {
+    if (times.length() === 0) {
       throw new Error("Times vector must have at least one element");
     }
     const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, outputs.pointer);
