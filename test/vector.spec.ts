@@ -44,4 +44,14 @@ describe('Vector', function () {
     }
   });
 
+  it('can resize', function () {
+    let v = new Vector([1, 2]);
+    v.resize(4);
+    assert.equal(v.get(0), 1);
+    assert.equal(v.length(), 4);
+    v.resize(1);
+    assert.equal(v.get(0), 1);
+    assert.equal(v.length(), 1);
+  });
+
 });

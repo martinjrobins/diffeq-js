@@ -19,6 +19,8 @@ type Vector_get_data_t = (ptr: number) => number;
 let Vector_get_data: Vector_get_data_t | undefined = undefined;
 type Vector_get_length_t = (ptr: number) => number;
 let Vector_get_length: Vector_get_length_t | undefined = undefined;
+type Vector_resize_t = (ptr: number, len: number) => void;
+let Vector_resize: Vector_resize_t | undefined = undefined;
 
 
 export function extract_vector_functions(obj: WebAssembly.WebAssemblyInstantiatedSource) {
@@ -31,6 +33,7 @@ export function extract_vector_functions(obj: WebAssembly.WebAssemblyInstantiate
   Vector_set = obj.instance.exports.Vector_set as Vector_set_t;
   Vector_get_data = obj.instance.exports.Vector_get_data as Vector_get_data_t;
   Vector_get_length = obj.instance.exports.Vector_get_length as Vector_get_length_t;
+  Vector_resize = obj.instance.exports.Vector_resize as Vector_resize_t;
 }
 
 class Vector {
@@ -52,6 +55,9 @@ class Vector {
   }
   destroy() {
     check_function(Vector_destroy)(this.pointer);
+  }
+  resize(len: number) {
+    check_function(Vector_resize)(this.pointer, len);
   }
   length() {
     return check_function(Vector_get_length)(this.pointer);
