@@ -49,11 +49,8 @@ class Solver {
     if (inputs.length() != this.number_of_inputs) {
       throw new Error(`Expected ${this.number_of_inputs} inputs, got ${inputs.length}`);
     }
-    if (outputs.length() != this.number_of_outputs * times.length()) {
-      throw new Error(`Expected ${this.number_of_outputs * times.length} outputs, got ${outputs.length}`);
-    }
-    if (times.length() === 0) {
-      throw new Error("Times vector must have at least one element");
+    if (times.length() < 2) {
+      throw new Error("Times vector must have at least two elements");
     }
     const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, outputs.pointer);
     if (result != 0) {
