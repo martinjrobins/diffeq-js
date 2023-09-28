@@ -57,4 +57,14 @@ describe('Solver', function () {
     
     solver.destroy();
   });
+  it('fails gracefully when solver fails', function () {
+    let options = new Options({fixed_times: false});
+    let solver = new Solver(options);
+    let times = new Vector([0, 1]);
+    let inputs = new Vector([1, 0]);
+    let outputs = new Vector(new Array(times.length() * solver.number_of_outputs));
+    solver.solve(times, inputs, outputs);
+    solver.destroy();
+  });
+
 });

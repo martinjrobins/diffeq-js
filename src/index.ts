@@ -41,7 +41,14 @@ function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
     },
     body: JSON.stringify(data),
   };
-  const response = fetch(`${baseUrl}/compile`, options);
+  const response = fetch(`${baseUrl}/compile`, options).then((response) => {
+    if (!response.ok) {
+      return response.text().then((text) => {
+        throw text;
+      });
+    }
+    return response;
+  });
   return compileResponse(response);
 }
 
