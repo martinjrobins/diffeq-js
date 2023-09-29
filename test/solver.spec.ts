@@ -2,10 +2,11 @@ import Vector from '../src/vector';
 import Solver from '../src/solver';
 import Options from '../src/options';
 import { describe, it, before } from 'mocha';
-import { assert } from 'chai';
+import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import { compileModel } from '../src/index';
 import logistic_code from './logistic';
+import { error } from 'console';
 
 
 describe('Solver', function () {
@@ -63,7 +64,33 @@ describe('Solver', function () {
     let times = new Vector([0, 1]);
     let inputs = new Vector([1, 0]);
     let outputs = new Vector(new Array(times.length() * solver.number_of_outputs));
-    solver.solve(times, inputs, outputs);
+    let error = undefined;
+
+    // should error with a message
+    try {
+      solver.solve(times, inputs, outputs);
+      assert.fail("Should have failed");
+    } catch (e) {
+      if (e instanceof Error) {
+        error = e;
+        expect(error.toString()).to.contain("Error");
+      } else {
+        assert.fail("Should have failed with an Error");
+      }
+    }
+
+    // try again, error should be the same
+    try {
+      solver.solve(times, inputs, outputs);
+      assert.fail("Should have failed");
+    } catch (e) {
+      if (e instanceof Error) {
+        assert.equal(e.toString(), error.toString());
+      } else {
+        assert.fail("Should have failed with an Error");
+      }
+    }
+      
     solver.destroy();
   });
 

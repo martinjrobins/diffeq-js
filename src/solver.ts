@@ -1,3 +1,4 @@
+import { stderr } from "./index";
 import Options from "./options";
 import { check_function } from "./utils";
 import Vector from "./vector";
@@ -54,7 +55,7 @@ class Solver {
     }
     const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, outputs.pointer);
     if (result != 0) {
-      throw new Error("Solve failed");
+      throw new Error(stderr.readToString());
     }
   }
 }

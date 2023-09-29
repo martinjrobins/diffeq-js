@@ -19,6 +19,27 @@ let fds = [
 let wasi = new WASI(args, env, fds);
 let inst: WebAssembly.WebAssemblyInstantiatedSource | undefined = undefined;
 
+class SimpleOpenFile {
+  file: File;
+  file_pos: number;
+  constructor(file: File) {
+    this.file = file;
+    this.file_pos = 0;
+  }
+  readToString() {
+    const data = this.file.data as Uint8Array
+    const start = this.file_pos;
+    const end = data.byteLength;
+    const slice = data.slice(start, end);
+    this.file_pos = end;
+    const string = new TextDecoder().decode(slice);
+    return string;
+  }
+}
+
+let stderr = new SimpleOpenFile(wasi.fds[2].file);
+let stdout = new SimpleOpenFile(wasi.fds[1].file);
+
 function getWasmMemory() {
   if (inst === undefined) {
     throw new Error("WASM module not loaded");
@@ -62,11 +83,12 @@ function compileResponse(response: Promise<Response>) {
       extract_options_functions(obj);
       extract_solver_functions(obj);
       inst = obj 
+      wasi.initialize(inst.instance);
     },
   );
 }
 
-export { compileModel, compileResponse, getWasmMemory }
+export { compileModel, compileResponse, getWasmMemory, stderr, stdout }
 
 
 
