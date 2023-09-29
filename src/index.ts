@@ -37,7 +37,10 @@ class SimpleOpenFile {
   }
 }
 
+// @ts-expect-error
 let stderr = new SimpleOpenFile(wasi.fds[2].file);
+
+// @ts-expect-error
 let stdout = new SimpleOpenFile(wasi.fds[1].file);
 
 function getWasmMemory() {
@@ -83,6 +86,7 @@ function compileResponse(response: Promise<Response>) {
       extract_options_functions(obj);
       extract_solver_functions(obj);
       inst = obj 
+      // @ts-expect-error
       wasi.initialize(inst.instance);
     },
   );
