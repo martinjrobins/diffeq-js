@@ -285,7 +285,7 @@ Line 1, Column 1: Error: missing 'out' array
 ## Contact
 
 If you have any questions or comments, please file an issue on the
-[GitHub](https://github.com/martinjrobins/diffeq-web) repository or contact the
+[GitHub](https://github.com/martinjrobins/diffeq-js) repository or contact the
 author via [email](mailto:martinjrobins@gmail.com)
 
 
