@@ -307,6 +307,24 @@ Line 1, Column 1: Error: missing 'G' array
 Line 1, Column 1: Error: missing 'out' array
 ```
 
+### Using diffeq from other languages
+
+This library is only a thin wrapper around the WASM module and the remote server
+that provides the compilation service, and so it is possible to compile the diffeq DSL and use the
+provided WASM module directly from other languages. 
+
+The diffeq-js library uses the [WASI browser shim](https://github.com/bjorn3/browser_wasi_shim) to provide a
+[WASI](https://wasi.dev/) environment for the WASM module, and so it is possible
+to use the WASM module from other languages that support WASI directly, such as
+Rust or C, or from other WASM runtimes like the [Wasmer](https://wasmer.io/)
+[SDK](https://github.com/wasmerio/wasmer), which supports a wide range of
+languages including C, C++, C#, Go, Java, PHP, Python, Ruby, and Rust.
+
+If you are interested in using the diffeq DSL from other languages, you could do one of the following:
+
+* Contact the author directly, Martin Robinson, via [email](mailto:martinjrobins@gmail.com), to discuss your requirements and see if a collaboration is possible
+* Consult the source code of the diffeq-js library, which is available on [GitHub](https://github.com/martinjrobins/diffeq-js), and port the code to your language of choice
+
 ## Contact
 
 If you have any questions or comments, please file an issue on the
