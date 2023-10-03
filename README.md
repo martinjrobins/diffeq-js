@@ -11,9 +11,12 @@ remote server, so an active internet connection is required to use the library.
 Once compiled, the WASM module is returned to the client and can be used to
 solve the DAE system as many times as required.
 
-For example, the following code solves a classic DAE testcase,
-the Robertson (1966) problem, which models the  kinetics of an autocatalytic
-reaction, given by the following set of equations:
+For an online interactive demo of the library, see the
+[diffeq-web](https://martinjrobins.github.io/diffeq-web/) website.
+
+For an example of how to use the library directly, the following code solves a
+classic DAE testcase, the Robertson (1966) problem, which models the  kinetics
+of an autocatalytic reaction, given by the following set of equations:
 
 $$
 \begin{align}
