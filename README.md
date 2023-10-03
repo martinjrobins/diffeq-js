@@ -222,6 +222,31 @@ The DSL allows the user to specify an arbitrary number of intermediate variables
 * `G_i` - the vector $G(\mathbf{u}, t)$
 * `out_i` - the output variables
 
+### Predefined variables
+
+The only predefined variable is the scalar `t` which is the current time, this allows the equations to be written as functions of time. For example
+
+```
+F_i {
+  dydt,
+}
+G_i {
+  k1 * t + sin(t)
+}
+```
+
+### Mathematical functions
+
+The DSL supports the following mathematical functions:
+
+* `sin(x)` - sine of x
+* `cos(x)` - cosine of x
+* `tan(x)` - tangent of x
+* `exp(x)` - exponential of x
+* `log(x)` - natural logarithm of x
+* `sqrt(x)` - square root of x
+* `abs(x)` - absolute value of x
+* `sigmoid(x)` - sigmoid function of x
 
 ## Compiling the DSL
 
