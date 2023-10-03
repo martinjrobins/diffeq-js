@@ -1,6 +1,17 @@
 {
   "name": "@martinjrobins/diffeq-js",
-  "version": "0.0.8",
+  "version": "0.0.9",
+  "homepage": "https://github.com/martinjrobins/diffeq-web",
+  "description": "A library for solving differential equations in JavaScript",
+  "author": "Martin Robinson <martinjrobins@gmail.com> (https://github.com/martinjrobins)",
+  "bugs": {
+    "url": "https://github.com/martinjrobins/diffeq-web/issues",
+    "email": "martinjrobins@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinjrobins/diffeq-web"
+  },
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
