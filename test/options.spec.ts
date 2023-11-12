@@ -36,4 +36,14 @@ describe('Options', function () {
     options.destroy();
   });
 
+  it('can set fwd_sens', function () {
+    let options = new Options({ fwd_sens: true });
+    assert.equal(options.get_fwd_sens(), true);
+    options.destroy();
+
+    options = new Options({ fwd_sens: false });
+    assert.equal(options.get_fwd_sens(), false);
+    options.destroy();
+  });
+
 });

@@ -7,7 +7,7 @@ type Solver_create_t = () => number;
 let Solver_create: Solver_create_t | undefined = undefined;
 type Solver_destroy_t = (ptr: number) => void;
 let Solver_destroy: Solver_destroy_t | undefined = undefined;
-type Solver_solve_t = (ptr: number, times: number, inputs: number, outputs: number) => number;
+type Solver_solve_t = (ptr: number, times: number, inputs: number, dinputs: number, outputs: number, doutputs: number) => number;
 let Solver_solve: Solver_solve_t | undefined = undefined;
 type Solver_init_t = (ptr: number, options: number) => void;
 let Solver_init: Solver_init_t | undefined = undefined;
@@ -35,6 +35,7 @@ class Solver {
   number_of_outputs: number;
   number_of_states: number;
   options: Options;
+  dummy_vector: Vector;
   constructor(options: Options) {
     this.options = options;
     this.pointer = check_function(Solver_create)();
@@ -42,6 +43,7 @@ class Solver {
     this.number_of_inputs = check_function(Solver_number_of_inputs)(this.pointer);
     this.number_of_outputs = check_function(Solver_number_of_outputs)(this.pointer);
     this.number_of_states = check_function(Solver_number_of_states)(this.pointer);
+    this.dummy_vector = new Vector([]);
   }
   destroy() {
     check_function(Solver_destroy)(this.pointer);
@@ -53,7 +55,23 @@ class Solver {
     if (times.length() < 2) {
       throw new Error("Times vector must have at least two elements");
     }
-    const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, outputs.pointer);
+    const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, this.dummy_vector.pointer, outputs.pointer, this.dummy_vector.pointer);
+    if (result != 0) {
+      throw new Error(stderr.readToString());
+    }
+  }
+  solve_with_sensitivities(times: Vector, inputs: Vector, outputs: Vector, dinputs: Vector, doutputs: Vector) {
+    if (inputs.length() != this.number_of_inputs) {
+      throw new Error(`Expected ${this.number_of_inputs} inputs, got ${inputs.length}`);
+    }
+    if (inputs.length() != dinputs.length()) {
+      throw new Error(`Expected ${inputs.length()} dinputs, got ${dinputs.length()}`);
+    }
+    if (times.length() < 2) {
+      throw new Error("Times vector must have at least two elements");
+    }
+
+    const result = check_function(Solver_solve)(this.pointer, times.pointer, inputs.pointer, dinputs.pointer, outputs.pointer, doutputs.pointer);
     if (result != 0) {
       throw new Error(stderr.readToString());
     }

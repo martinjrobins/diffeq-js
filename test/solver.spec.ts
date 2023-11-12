@@ -39,6 +39,37 @@ describe('Solver', function () {
     
     solver.destroy();
   });
+
+  it('can solve with sensitivities', function () {
+    let options = new Options({fixed_times: true, fwd_sens: true});
+    let solver = new Solver(options);
+    let times = new Vector([0, 1]);
+    let inputs = new Vector([1, 2]);
+    let dinputs = new Vector([1, 0]);
+    let outputs = new Vector(new Array(times.length() * solver.number_of_outputs));
+    let doutputs = new Vector([]);
+    solver.solve_with_sensitivities(times, inputs, outputs, dinputs, doutputs);
+    const should_be = [
+      [1, 2],
+      [1.462115,2.924229],
+    ]
+    for (let i = 0; i < times.length(); i++) {
+      for (let j = 0; j < solver.number_of_outputs; j++) {
+        assert.approximately(outputs.get(i * solver.number_of_outputs + j), should_be[i][j], 0.0001);
+      }
+    }
+    const should_be_sens = [
+      [0, 0],
+      [0.39322662865615104, 0.7864532573123021],
+    ]
+    for (let i = 0; i < times.length(); i++) {
+      for (let j = 0; j < solver.number_of_outputs; j++) {
+        assert.approximately(doutputs.get(i * solver.number_of_outputs + j), should_be_sens[i][j], 0.0001);
+      }
+    }
+    solver.destroy();
+  });
+
   it('can solve at solver times', function () {
     let options = new Options({fixed_times: false});
     let solver = new Solver(options);
