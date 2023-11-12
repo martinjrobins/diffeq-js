@@ -50,8 +50,7 @@ function getWasmMemory() {
   return inst.instance.exports.memory as WebAssembly.Memory;
 }
 
-//const defaultBaseUrl = "https://diffeq-backend.fly.dev";
-const defaultBaseUrl = "http://localhost:8080";
+const defaultBaseUrl = "https://diffeq-backend.fly.dev";
 
 function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
   const data = {
