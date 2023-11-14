@@ -48,7 +48,7 @@ describe('Solver', function () {
     let dinputs = new Vector([1, 0]);
     let outputs = new Vector(new Array(times.length() * solver.number_of_outputs));
     let doutputs = new Vector([]);
-    solver.solve_with_sensitivities(times, inputs, outputs, dinputs, doutputs);
+    solver.solve_with_sensitivities(times, inputs, dinputs, outputs, doutputs);
     const should_be = [
       [1, 2],
       [1.462115,2.924229],
@@ -67,6 +67,24 @@ describe('Solver', function () {
         assert.approximately(doutputs.get(i * solver.number_of_outputs + j), should_be_sens[i][j], 0.0001);
       }
     }
+    // check inputs and dinputs are unchanged
+    assert.equal(inputs.get(0), 1);
+    assert.equal(inputs.get(1), 2);
+    assert.equal(dinputs.get(0), 1);
+    assert.equal(dinputs.get(1), 0);
+
+    solver.solve_with_sensitivities(times, inputs, dinputs, outputs, doutputs);
+    for (let i = 0; i < times.length(); i++) {
+      for (let j = 0; j < solver.number_of_outputs; j++) {
+        assert.approximately(outputs.get(i * solver.number_of_outputs + j), should_be[i][j], 0.0001);
+      }
+    }
+    for (let i = 0; i < times.length(); i++) {
+      for (let j = 0; j < solver.number_of_outputs; j++) {
+        assert.approximately(doutputs.get(i * solver.number_of_outputs + j), should_be_sens[i][j], 0.0001);
+      }
+    }
+
     solver.destroy();
   });
 

@@ -60,7 +60,7 @@ class Solver {
       throw new Error(stderr.readToString());
     }
   }
-  solve_with_sensitivities(times: Vector, inputs: Vector, outputs: Vector, dinputs: Vector, doutputs: Vector) {
+  solve_with_sensitivities(times: Vector, inputs: Vector, dinputs: Vector, outputs: Vector, doutputs: Vector) {
     if (inputs.length() != this.number_of_inputs) {
       throw new Error(`Expected ${this.number_of_inputs} inputs, got ${inputs.length}`);
     }
