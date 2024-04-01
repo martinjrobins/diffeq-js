@@ -5,7 +5,7 @@ import { extract_solver_functions } from "./solver";
 import base from "/node_modules/base-x/src/index";
 
 export { default as Vector } from "./vector";
-export { default as Options } from "./options";
+export { default as Options, OptionsJacobian, OptionsLinearSolver, OptionsPreconditioner } from "./options";
 export { default as Solver } from "./solver";
 
 
