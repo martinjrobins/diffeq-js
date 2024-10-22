@@ -1,6 +1,6 @@
 {
   "name": "@martinjrobins/diffeq-js",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "homepage": "https://github.com/martinjrobins/diffeq-js",
   "description": "A library for solving differential equations in JavaScript",
   "author": "Martin Robinson <martinjrobins@gmail.com> (https://github.com/martinjrobins)",

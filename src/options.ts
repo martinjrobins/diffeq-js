@@ -44,6 +44,19 @@ type Options_set_debug_t = (ptr: number, debug: number) => void;
 let Options_set_debug: Options_set_debug_t | undefined = undefined;
 type Options_get_debug_t = (ptr: number) => number;
 let Options_get_debug: Options_get_debug_t | undefined = undefined;
+type Options_set_mxsteps_t = (ptr: number, mxsteps: number) => void;
+let Options_set_mxsteps: Options_set_mxsteps_t | undefined = undefined;
+type Options_get_mxsteps_t = (ptr: number) => number;
+let Options_get_mxsteps: Options_get_mxsteps_t | undefined = undefined;
+type Options_set_min_step_t = (ptr: number, min_step: number) => void;
+let Options_set_min_step: Options_set_min_step_t | undefined = undefined;
+type Options_get_min_step_t = (ptr: number) => number;
+let Options_get_min_step: Options_get_min_step_t | undefined = undefined;
+type Options_set_max_step_t = (ptr: number, max_step: number) => void;
+let Options_set_max_step: Options_set_max_step_t | undefined = undefined;
+type Options_get_max_step_t = (ptr: number) => number;
+let Options_get_max_step: Options_get_max_step_t | undefined = undefined;
+
 
 export function extract_options_functions(obj: WebAssembly.WebAssemblyInstantiatedSource) {
   Options_create = obj.instance.exports.Options_create as Options_create_t;
@@ -68,6 +81,12 @@ export function extract_options_functions(obj: WebAssembly.WebAssemblyInstantiat
   Options_get_linsol_max_iterations = obj.instance.exports.Options_get_linsol_max_iterations as (ptr: number) => number;
   Options_set_debug = obj.instance.exports.Options_set_debug as (ptr: number, debug: number) => void;
   Options_get_debug = obj.instance.exports.Options_get_debug as (ptr: number) => number;
+  Options_set_mxsteps = obj.instance.exports.Options_set_mxsteps as (ptr: number, mxsteps: number) => void;
+  Options_get_mxsteps = obj.instance.exports.Options_get_mxsteps as (ptr: number) => number;
+  Options_set_min_step = obj.instance.exports.Options_set_min_step as (ptr: number, min_step: number) => void;
+  Options_get_min_step = obj.instance.exports.Options_get_min_step as (ptr: number) => number;
+  Options_set_max_step = obj.instance.exports.Options_set_max_step as (ptr: number, max_step: number) => void;
+  Options_get_max_step = obj.instance.exports.Options_get_max_step as (ptr: number) => number;
 }
 
 export enum OptionsLinearSolver {
@@ -95,7 +114,21 @@ export enum OptionsJacobian {
 
 class Options {
   pointer: number;
-  constructor({ fixed_times = false, print_stats = false, fwd_sens = false, atol = 1e-6, rtol = 1e-6, linear_solver = OptionsLinearSolver.LINEAR_SOLVER_DENSE, preconditioner = OptionsPreconditioner.PRECON_NONE, jacobian = OptionsJacobian.DENSE_JACOBIAN, linsol_max_iterations = 100, debug = false }) {
+  constructor({ 
+    mxsteps = 500,
+    min_step = 0.0,
+    max_step = Number.MAX_VALUE,
+    fixed_times = false, 
+    print_stats = false, 
+    fwd_sens = false, 
+    atol = 1e-6, 
+    rtol = 1e-6, 
+    linear_solver = OptionsLinearSolver.LINEAR_SOLVER_DENSE, 
+    preconditioner = OptionsPreconditioner.PRECON_NONE, 
+    jacobian = OptionsJacobian.DENSE_JACOBIAN, 
+    linsol_max_iterations = 100, 
+    debug = false 
+  }) {
     this.pointer = check_function(Options_create)();
     check_function(Options_set_fixed_times)(this.pointer, fixed_times ? 1 : 0);
     check_function(Options_set_print_stats)(this.pointer, print_stats ? 1 : 0);
@@ -107,6 +140,9 @@ class Options {
     check_function(Options_set_jacobian)(this.pointer, jacobian);
     check_function(Options_set_linsol_max_iterations)(this.pointer, linsol_max_iterations);
     check_function(Options_set_debug)(this.pointer, debug ? 1 : 0);
+    check_function(Options_set_mxsteps)(this.pointer, mxsteps);
+    check_function(Options_set_min_step)(this.pointer, min_step);
+    check_function(Options_set_max_step)(this.pointer, max_step);
   }
   destroy() {
     check_function(Options_destroy)(this.pointer);
@@ -140,6 +176,15 @@ class Options {
   }
   get_debug() {
     return check_function(Options_get_debug)(this.pointer) === 1;
+  }
+  get_mxsteps() {
+    return check_function(Options_get_mxsteps)(this.pointer);
+  }
+  get_min_step() {
+    return check_function(Options_get_min_step)(this.pointer);
+  }
+  get_max_step() {
+    return check_function(Options_get_max_step)(this.pointer);
   }
 }
   
