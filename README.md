@@ -115,26 +115,54 @@ The DSL is compiled to a WASM module using the `compileModel` function:
 import { compileModel } from 'diffeq-js';
 
 const code = `...`;
-compileModel(code).then(() => {
-  // create Solver, Vector etc here
-});
+// Compile with an optional ID to support multiple models
+await compileModel(code, 'model1');
 ```
 
 The `compileModel` function requires an active internet connection as it sends
 the model code to a remote server for compilation to WASM. All the classes in
 the library are wrappers around corresponding classes in the WASM module, and so
 the `compileModel` function must be called successfully before any of the other
-classes can be used. 
+classes can be used.
+
+### Multiple Models
+
+Version 0.2.0 introduces support for compiling and solving multiple models simultaneously. Each model can be given a unique identifier when compiled:
+
+```javascript
+// Compile multiple models
+await compileModel(code1, 'model1');
+await compileModel(code2, 'model2');
+
+// Create solvers for each model
+const options1 = new Options({}, 'model1');
+const solver1 = new Solver(options1, 'model1');
+
+const options2 = new Options({}, 'model2');
+const solver2 = new Solver(options2, 'model2');
+```
 
 ### Options
 
-The `compileModel` function takes an `Options` object as its argument. The contructor for the `Options` class takes the following arguments:
+The `Options` class constructor takes an options object and an optional model ID:
 
-* `print_stats` - statistics about each solve are printed to the console after each successful call to `solve`. Default: false
-* `fixed_times` - if false (the default), the solver will consider the first element 
-  of `times` to be the starting time point, and the second element to be the final time point, 
-  between these two times the solver will choose the time points to output (these are returned in the `times` vector). 
-  If true, the solver will only return solutions at the times specified in the input `times` vector. Default: false
+```javascript
+const options = new Options({
+  print_stats: false,  // Print statistics after each solve
+  fixed_times: false,  // Use fixed time points or let solver choose
+  mxsteps: 500,        // Maximum number of steps
+  min_step: 0.0,       // Minimum step size
+  max_step: Infinity,  // Maximum step size
+  atol: 1e-6,         // Absolute tolerance
+  rtol: 1e-6,         // Relative tolerance
+  debug: false,        // Enable debug output
+  fwd_sens: false,     // Enable forward sensitivity analysis
+  linear_solver: OptionsLinearSolver.DENSE,  // Linear solver type
+  preconditioner: OptionsPreconditioner.NONE, // Preconditioner type
+  jacobian: OptionsJacobian.DENSE_JACOBIAN,  // Jacobian type
+  linsol_max_iterations: 100  // Maximum iterations for linear solver
+}, 'model1');
+```
 
 ### Compilation errors
 

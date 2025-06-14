@@ -1,23 +1,11 @@
-import { WASI, File, OpenFile, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
-import { extract_vector_functions } from "./vector";
-import { extract_options_functions } from "./options";
-import { extract_solver_functions } from "./solver";
-import base from "/node_modules/base-x/src/index";
+import {File, OpenFile, WASI} from "@bjorn3/browser_wasi_shim";
+import {extract_vector_functions} from "./vector";
+import {extract_options_functions} from "./options";
+import {extract_solver_functions} from "./solver";
 
 export { default as Vector } from "./vector";
 export { default as Options, OptionsJacobian, OptionsLinearSolver, OptionsPreconditioner } from "./options";
 export { default as Solver } from "./solver";
-
-
-let args: string[] = [];
-let env: string[] = [];
-let fds = [
-    new OpenFile(new File([])), // stdin
-    new OpenFile(new File([])), // stdout
-    new OpenFile(new File([])), // stderr
-];
-let wasi = new WASI(args, env, fds);
-let inst: WebAssembly.WebAssemblyInstantiatedSource | undefined = undefined;
 
 class SimpleOpenFile {
   file: File;
@@ -32,29 +20,83 @@ class SimpleOpenFile {
     const end = data.byteLength;
     const slice = data.slice(start, end);
     this.file_pos = end;
-    const string = new TextDecoder().decode(slice);
-    return string;
+    return new TextDecoder().decode(slice);
   }
 }
 
-// @ts-expect-error
-let stderr = new SimpleOpenFile(wasi.fds[2].file);
+const defaultBaseUrl = "https://compbio.fhs.um.edu.mo/diffeq";
 
-// @ts-expect-error
-let stdout = new SimpleOpenFile(wasi.fds[1].file);
-
-function getWasmMemory() {
-  if (inst === undefined) {
-    throw new Error("WASM module not loaded");
-  }
-  return inst.instance.exports.memory as WebAssembly.Memory;
+function createWasi() {
+  let args: string[] = [];
+  let env: string[] = [];
+  let fds = [
+    new OpenFile(new File([])), // stdin
+    new OpenFile(new File([])), // stdout
+    new OpenFile(new File([])), // stderr
+  ];
+  return new WASI(args, env, fds);
 }
 
-const defaultBaseUrl = "https://diffeq-backend.fly.dev";
+class ModelRegistry {
+  private static models: Map<string, any> = new Map();
+  private static defaultModel: any = null;
 
-function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
+  static register(id: string | undefined, model: any) {
+    if (id) {
+      this.models.set(id, model);
+    } else {
+      this.defaultModel = model;
+    }
+  }
+
+  static get(id?: string) {
+    if (id) {
+      return this.models.get(id);
+    }
+    return this.defaultModel;
+  }
+}
+
+function compileResponse(response: Promise<Response>) {
+  const wasi = createWasi();
+  const importObject = {
+    "wasi_snapshot_preview1": wasi.wasiImport,
+  };
+  return WebAssembly.instantiateStreaming(response, importObject).then(
+    (obj) => { 
+      wasi.initialize({
+        exports: {
+          memory: obj.instance.exports.memory as WebAssembly.Memory,
+        },
+      });
+      const stderr = new SimpleOpenFile((wasi.fds[2] as OpenFile).file);
+      const stdout = new SimpleOpenFile((wasi.fds[1] as OpenFile).file);
+      const vectorFunctions = extract_vector_functions(obj);
+      const optionsFunctions = extract_options_functions(obj);
+      const solverFunctions = extract_solver_functions(obj);
+      
+      // Set global functions
+      global.vectorFunctions = vectorFunctions;
+      global.optionsFunctions = optionsFunctions;
+      global.solverFunctions = solverFunctions;
+      global.stderr = stderr;
+      global.stdout = stdout;
+      
+      return {
+        instance: obj,
+        stderr,
+        stdout,
+        vectorFunctions,
+        optionsFunctions,
+        solverFunctions
+      };
+    },
+  );
+}
+
+export async function compileModel(code: string, id?: string) {
   const data = {
-    text,
+    text: code,
     name: "unknown",
   };
   const options: RequestInit = {
@@ -65,7 +107,7 @@ function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
     },
     body: JSON.stringify(data),
   };
-  const response = fetch(`${baseUrl}/compile`, options).then((response) => {
+  const response = fetch(`${defaultBaseUrl}/compile`, options).then((response) => {
     if (!response.ok) {
       return response.text().then((text) => {
         throw text;
@@ -73,26 +115,14 @@ function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
     }
     return response;
   });
-  return compileResponse(response);
+  const model = await compileResponse(response);
+  ModelRegistry.register(id, model);
+  return model;
 }
 
-function compileResponse(response: Promise<Response>) {
-  const importObject = {
-    "wasi_snapshot_preview1": wasi.wasiImport,
-  };
-  return WebAssembly.instantiateStreaming(response, importObject).then(
-    (obj) => { 
-      extract_vector_functions(obj);
-      extract_options_functions(obj);
-      extract_solver_functions(obj);
-      inst = obj 
-      // @ts-expect-error
-      wasi.initialize(inst.instance);
-    },
-  );
+export function getModel(id?: string) {
+  return ModelRegistry.get(id);
 }
-
-export { compileModel, compileResponse, getWasmMemory, stderr, stdout }
 
 
 

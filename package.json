@@ -1,6 +1,6 @@
 {
   "name": "@martinjrobins/diffeq-js",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "homepage": "https://github.com/martinjrobins/diffeq-js",
   "description": "A library for solving differential equations in JavaScript",
   "author": "Martin Robinson <martinjrobins@gmail.com> (https://github.com/martinjrobins)",
@@ -13,41 +13,37 @@
     "url": "https://github.com/martinjrobins/diffeq-js"
   },
   "source": "src/index.ts",
-  "main": "dist/main.js",
-  "types": "dist/types.d.ts",
+  "main": "./dist/diffeq-js.umd.js",
+  "module": "./dist/diffeq-js.es.js",
+  "types": "./dist/types.d.ts",
   "license": "MIT",
-  "browser": "dist/browser.js",
+  "browser": "./dist/diffeq-js.es.js",
   "type": "module",
-  "targets": {
-    "browser": {
-      "context": "browser",
-      "optimize": true,
-      "includeNodeModules": true,
-      "sourceMap": true,
-      "outputFormat": "esmodule"
+  "exports": {
+    ".": {
+      "import": "./dist/diffeq-js.es.js",
+      "require": "./dist/diffeq-js.umd.js",
+      "types": "./dist/types.d.ts"
     }
   },
-  "@parcel/resolver-default": {
-    "packageExports": true
-  },
   "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build",
+    "dev": "vite",
+    "build": "vite build",
     "test": "mocha -r ts-node/register"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "2.12.0",
-    "@parcel/transformer-typescript-types": "2.12.0",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.9",
+    "@vitejs/plugin-vue": "^5.0.0",
     "chai": "^4.3.8",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "parcel": "^2.12.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vue-tsc": "^1.8.0"
   },
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.2.14"

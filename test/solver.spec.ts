@@ -3,15 +3,13 @@ import Solver from '../src/solver';
 import Options from '../src/options';
 import { describe, it, before } from 'mocha';
 import { assert, expect } from 'chai';
-import * as fs from 'fs';
-import { compileModel } from '../src/index';
-import logistic_code from './logistic';
-import { error } from 'console';
+import { compileModel } from '/src';
+import { code1 } from './logistic';
 
 
-describe('Solver', function () {
+describe('Single Solver', function () {
   before(function () {
-    return compileModel(logistic_code);
+    return compileModel(code1);
   });
 
   it('can construct and destroy', function () {
