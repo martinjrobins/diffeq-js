@@ -11,7 +11,7 @@ import { error } from 'console';
 
 describe('Solver', function () {
   before(function () {
-    return compileModel(logistic_code);
+    return compileModel(logistic_code, "https://diffeq-backend-staging.fly.dev")
   });
 
   it('can construct and destroy', function () {
@@ -21,7 +21,7 @@ describe('Solver', function () {
   });
   
   it('can solve at fixed times', function () {
-    let options = new Options({fixed_times: true});
+    let options = new Options({fixed_times: true, debug: true});
     let solver = new Solver(options);
     let times = new Vector([0, 1]);
     let inputs = new Vector([1, 2]);

@@ -36,6 +36,16 @@ describe('Options', function () {
     options.destroy();
   });
 
+  it('can set max out steps', function () {
+    let options = new Options({ max_out_steps: 1 });
+    assert.equal(options.get_max_out_steps(), 1);
+    options.destroy();
+
+    options = new Options({ max_out_steps: 101 });
+    assert.equal(options.get_max_out_steps(), 101);
+    options.destroy();
+  });
+
   it('can set fwd_sens', function () {
     let options = new Options({ fwd_sens: true });
     assert.equal(options.get_fwd_sens(), true);

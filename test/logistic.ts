@@ -10,11 +10,11 @@ dudt_i {
     dydt = 0,
     dzdt = 0,
 }
-F_i {
+M_i {
     dydt,
     0,
 }
-G_i {
+F_i {
     (r * y) * (1 - (y / k)),
     (2 * y) - z,
 }

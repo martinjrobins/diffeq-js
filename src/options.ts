@@ -56,6 +56,11 @@ type Options_set_max_step_t = (ptr: number, max_step: number) => void;
 let Options_set_max_step: Options_set_max_step_t | undefined = undefined;
 type Options_get_max_step_t = (ptr: number) => number;
 let Options_get_max_step: Options_get_max_step_t | undefined = undefined;
+type Options_get_max_out_steps_t = (ptr: number) => number;
+let Options_get_max_out_steps: Options_get_max_out_steps_t | undefined = undefined;
+type Options_set_max_out_steps_t = (ptr: number, max_out_steps: number) => void;
+let Options_set_max_out_steps: Options_set_max_out_steps_t | undefined = undefined;
+
 
 
 export function extract_options_functions(obj: WebAssembly.WebAssemblyInstantiatedSource) {
@@ -87,6 +92,8 @@ export function extract_options_functions(obj: WebAssembly.WebAssemblyInstantiat
   Options_get_min_step = obj.instance.exports.Options_get_min_step as (ptr: number) => number;
   Options_set_max_step = obj.instance.exports.Options_set_max_step as (ptr: number, max_step: number) => void;
   Options_get_max_step = obj.instance.exports.Options_get_max_step as (ptr: number) => number;
+  Options_get_max_out_steps = obj.instance.exports.Options_get_max_out_steps as (ptr: number) => number;
+  Options_set_max_out_steps = obj.instance.exports.Options_set_max_out_steps as (ptr: number, max_out_steps: number) => void;
 }
 
 export enum OptionsLinearSolver {
@@ -118,6 +125,7 @@ class Options {
     mxsteps = 500,
     min_step = 0.0,
     max_step = Number.MAX_VALUE,
+    max_out_steps = 0,
     fixed_times = false, 
     print_stats = false, 
     fwd_sens = false, 
@@ -143,6 +151,7 @@ class Options {
     check_function(Options_set_mxsteps)(this.pointer, mxsteps);
     check_function(Options_set_min_step)(this.pointer, min_step);
     check_function(Options_set_max_step)(this.pointer, max_step);
+    check_function(Options_set_max_out_steps)(this.pointer, max_out_steps);
   }
   destroy() {
     check_function(Options_destroy)(this.pointer);
@@ -185,6 +194,9 @@ class Options {
   }
   get_max_step() {
     return check_function(Options_get_max_step)(this.pointer);
+  }
+  get_max_out_steps() {
+    return check_function(Options_get_max_out_steps)(this.pointer);
   }
 }
   

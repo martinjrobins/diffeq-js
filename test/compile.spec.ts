@@ -4,7 +4,7 @@ import { compileModel } from '../src/index';
 import logistic_code from './logistic';
 
 
-describe('Solver', function () {
+describe('Compile', function () {
   it('can compile a good model', function () {
     return compileModel(logistic_code).then(() => {
       assert(true);

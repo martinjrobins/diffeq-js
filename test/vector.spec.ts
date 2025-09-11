@@ -8,7 +8,7 @@ import { compileModel } from '../src/index';
 
 describe('Vector', function () {
   before(function () {
-    return compileModel(logistic_code);
+    return compileModel(logistic_code, "https://diffeq-backend-staging.fly.dev")
   });
 
   it('can construct and destroy', function () {

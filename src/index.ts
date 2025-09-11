@@ -3,6 +3,8 @@ import { extract_vector_functions } from "./vector";
 import { extract_options_functions } from "./options";
 import { extract_solver_functions } from "./solver";
 import base from "/node_modules/base-x/src/index";
+import { init } from "/node_modules/@parcel/source-map/index";
+import { check_function } from "./utils";
 
 export { default as Vector } from "./vector";
 export { default as Options, OptionsJacobian, OptionsLinearSolver, OptionsPreconditioner } from "./options";
@@ -76,12 +78,18 @@ function compileModel(text: string, baseUrl: string = defaultBaseUrl) {
   return compileResponse(response);
 }
 
+
+type initialize_model_t = () => void;
+let initialize_model: initialize_model_t | undefined = undefined;
+
 function compileResponse(response: Promise<Response>) {
   const importObject = {
     "wasi_snapshot_preview1": wasi.wasiImport,
   };
   return WebAssembly.instantiateStreaming(response, importObject).then(
     (obj) => { 
+      initialize_model = obj.instance.exports.initialize_model as initialize_model_t;
+      check_function(initialize_model)();
       extract_vector_functions(obj);
       extract_options_functions(obj);
       extract_solver_functions(obj);
